@@ -48,6 +48,40 @@ class CustomersControllerTest {
                 .isNotEmpty();
     }
 
+    @DirtiesContext
+    @Test
+    void createCustomer_whenUsernameAlreadyExists_thenReturnsForbiddenHttpStatus() {
+        // Given
+        CreateCustomerWrapper input = getDummyCreateCustomerWrapper();
+
+        // When
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(input)
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .post("/customers")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.CREATED.value());
+
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(input)
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .post("/customers")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
     @Test
     void createCustomer_whenGivingPartiallyEmptyCreateCustomerDTO_thenReturnsBadRequestHttpStatus() {
         // Given

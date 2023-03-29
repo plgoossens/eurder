@@ -1,9 +1,6 @@
 package com.switchfully.eurder;
 
-import com.switchfully.eurder.domain.models.Customer;
-import com.switchfully.eurder.domain.models.Item;
-import com.switchfully.eurder.domain.models.ItemGroup;
-import com.switchfully.eurder.domain.models.Order;
+import com.switchfully.eurder.domain.models.*;
 import com.switchfully.eurder.service.dto.*;
 import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 
@@ -100,6 +97,10 @@ public class TestsUtils {
 
     public static CreateCustomerWrapper getDummyCreateCustomerWrapper(){
         return new CreateCustomerWrapper(getDummyCreateCustomerDTO(), getDummyCreateCredentialsDTO());
+    }
+
+    public static Credentials getDummyCredentials(){
+        return new Credentials(CUSTOMER_USERNAME, CUSTOMER_PASSWORD, Role.CUSTOMER, CUSTOMER_ID);
     }
 
 }
