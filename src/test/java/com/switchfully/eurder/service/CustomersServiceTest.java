@@ -2,6 +2,7 @@ package com.switchfully.eurder.service;
 
 import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.domain.repositories.CustomersRepository;
+import com.switchfully.eurder.exceptions.exceptions.CustomerNotFoundException;
 import com.switchfully.eurder.service.dto.CreateCustomerDTO;
 import com.switchfully.eurder.service.mappers.CustomersMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,9 +29,7 @@ public class CustomersServiceTest {
     @Test
     void createCustomer_whenCreateCustomerDTOPartiallyNull_thenThrowsIllegalArgumentException() {
         CreateCustomerDTO createCustomerDTO = getPartiallyNullDummyCreateCustomerDTO();
-        assertThatThrownBy(() -> {
-            customersService.createCustomer(createCustomerDTO);
-        }).isInstanceOf(IllegalArgumentException.class)
+        assertThatThrownBy(() -> customersService.createCustomer(createCustomerDTO)).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("To create a customer, these fields need to be completed : firstName, lastName, email, address and phoneNumber.");
     }
 
@@ -47,5 +46,24 @@ public class CustomersServiceTest {
 
         //Then
         Mockito.verify(customersRepository).add(customer);
+    }
+
+    @Test
+    void getCustomerByID_whenCustomerExists() {
+        // Given
+        Customer expected = getDummyCustomer();
+        Mockito.when(customersRepository.getById(expected.getId())).thenReturn(expected);
+
+        // When
+        Customer result = customersService.getCustomerById(expected.getId());
+
+        // Then
+        assertThat(result).isEqualTo(expected);
+    }
+
+    @Test
+    void getCustomerByID_whenCustomerDoesntExist_thenThrowCustomerNotFoundException() {
+        assertThatThrownBy(() -> customersService.getCustomerById("fakeId")).isInstanceOf(CustomerNotFoundException.class)
+                .hasMessage("Customer with id fakeId was not found.");
     }
 }

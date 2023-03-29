@@ -2,6 +2,7 @@ package com.switchfully.eurder.service;
 
 import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.domain.repositories.CustomersRepository;
+import com.switchfully.eurder.exceptions.exceptions.CustomerNotFoundException;
 import com.switchfully.eurder.service.dto.CreateCustomerDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
 import com.switchfully.eurder.service.mappers.CustomersMapper;
@@ -39,5 +40,13 @@ public class CustomersService {
 
     public Collection<Customer> getCustomersList() {
         return customersRepository.getCustomersList();
+    }
+
+    public Customer getCustomerById(String id) {
+        Customer customer = customersRepository.getById(id);
+        if(customer == null){
+            throw new CustomerNotFoundException("Customer with id " + id + " was not found.");
+        }
+        return customer;
     }
 }

@@ -121,7 +121,7 @@ class OrdersControllerTest {
                 .post("/orders")
                 .then()
                 .assertThat()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -145,7 +145,7 @@ class OrdersControllerTest {
                 .post("/orders")
                 .then()
                 .assertThat()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     private IdDTO addDummyItem(){

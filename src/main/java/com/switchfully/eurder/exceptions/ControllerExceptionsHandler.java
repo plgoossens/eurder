@@ -26,12 +26,12 @@ public class ControllerExceptionsHandler extends ResponseEntityExceptionHandler 
     @ExceptionHandler(CustomerNotFoundException.class)
     protected void customerNotFoundException(CustomerNotFoundException ex, HttpServletResponse response) throws IOException{
         logger.error(ex.toString());
-        response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        response.sendError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
     }
 
     @ExceptionHandler(ItemNotFoundException.class)
     protected void itemNotFoundException(ItemNotFoundException ex, HttpServletResponse response) throws IOException{
         logger.error(ex.toString());
-        response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        response.sendError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
     }
 }

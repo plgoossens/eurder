@@ -110,17 +110,64 @@ class CustomersControllerTest {
         assertThat(result.length).isEqualTo(2);
     }
 
-    private void addCustomer() {
+    @DirtiesContext
+    @Test
+    void getCustomerByID_whenCustomerExists() {
+        String id = addCustomer();
+
+        Customer result = RestAssured
+                .given()
+                .accept(ContentType.JSON)
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .get("/customers/"+id)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .as(Customer.class);
+
+        assertThat(result)
+                .isNotNull()
+                .matches(customer -> customer.getId().equals(id))
+                .matches(customer -> customer.getFirstName().equals("first name"))
+                .matches(customer -> customer.getLastName().equals("last name"))
+                .matches(customer -> customer.getEmail().equals("email@address.com"))
+                .matches(customer -> customer.getAddress().equals("address"))
+                .matches(customer -> customer.getPhoneNumber().equals("025556677"));
+    }
+
+    @Test
+    void getCustomerByID_whenCustomerDoesntExists() {
+        RestAssured
+                .given()
+                .accept(ContentType.JSON)
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .get("/customers/fakeId")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    private String addCustomer() {
         CreateCustomerDTO input = new CreateCustomerDTO("first name", "last name", "email@address.com", "address", "025556677");
 
         // When
-        RestAssured
+        IdDTO idDTO = RestAssured
                 .given()
                 .contentType(ContentType.JSON)
                 .body(input)
                 .baseUri("http://localhost")
                 .port(port)
                 .when()
-                .post("/customers");
+                .post("/customers")
+                .then()
+                .extract()
+                .as(IdDTO.class);
+
+        return idDTO.getId();
     }
 }
