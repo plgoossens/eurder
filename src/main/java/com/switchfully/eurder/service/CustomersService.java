@@ -7,6 +7,8 @@ import com.switchfully.eurder.service.dto.IdDTO;
 import com.switchfully.eurder.service.mappers.CustomersMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+
 @Service
 public class CustomersService {
 
@@ -33,5 +35,9 @@ public class CustomersService {
                 createCustomerDTO.getPhoneNumber() == null){
             throw new IllegalArgumentException("To create a customer, these fields need to be completed : firstName, lastName, email, address and phoneNumber.");
         }
+    }
+
+    public Collection<Customer> getCustomersList() {
+        return customersRepository.getCustomersList();
     }
 }

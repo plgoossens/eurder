@@ -3,17 +3,19 @@ package com.switchfully.eurder.domain.repositories;
 import com.switchfully.eurder.domain.models.Customer;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 public class CustomersRepository {
 
-    private Map<String, Customer> customersDB;
+    private final Map<String, Customer> customersDB;
 
     public CustomersRepository() {
         this.customersDB = new HashMap<>();
+    }
+
+    public Collection<Customer> getCustomersList(){
+        return customersDB.values();
     }
 
     public void add(Customer customer) {
