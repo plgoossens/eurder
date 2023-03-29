@@ -38,11 +38,11 @@ public class OrdersService {
         if(createOrderDTO.getCustomerId() == null || createOrderDTO.getItems() == null || createOrderDTO.getItems().isEmpty()){
             throw new IllegalArgumentException("To create an order, these fields need to be completed: customerId and items");
         }
-        if(customersRepository.getById(createOrderDTO.getCustomerId()) == null){
+        if(customersRepository.getById(createOrderDTO.getCustomerId()).isEmpty()){
             throw new CustomerNotFoundException("Customer with id " + createOrderDTO.getCustomerId() + " was not found.");
         }
         for(CreateItemGroupDTO createItemGroupDTO : createOrderDTO.getItems()){
-            if(itemsRepository.getById(createItemGroupDTO.getItemId()) == null){
+            if(itemsRepository.getById(createItemGroupDTO.getItemId()).isEmpty()){
                 throw new ItemNotFoundException("Item with id " + createItemGroupDTO.getItemId() + " was not found.");
             }
         }

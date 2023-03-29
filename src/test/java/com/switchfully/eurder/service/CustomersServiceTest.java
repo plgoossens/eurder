@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
 import static com.switchfully.eurder.TestsUtils.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -52,7 +54,7 @@ public class CustomersServiceTest {
     void getCustomerByID_whenCustomerExists() {
         // Given
         Customer expected = getDummyCustomer();
-        Mockito.when(customersRepository.getById(expected.getId())).thenReturn(expected);
+        Mockito.when(customersRepository.getById(expected.getId())).thenReturn(Optional.of(expected));
 
         // When
         Customer result = customersService.getCustomerById(expected.getId());

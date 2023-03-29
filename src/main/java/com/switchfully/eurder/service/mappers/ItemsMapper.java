@@ -3,13 +3,13 @@ package com.switchfully.eurder.service.mappers;
 import com.switchfully.eurder.domain.models.Item;
 import com.switchfully.eurder.domain.models.ItemGroup;
 import com.switchfully.eurder.domain.repositories.ItemsRepository;
+import com.switchfully.eurder.exceptions.exceptions.ItemNotFoundException;
 import com.switchfully.eurder.service.dto.CreateItemDTO;
 import com.switchfully.eurder.service.dto.CreateItemGroupDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
 import com.switchfully.eurder.service.dto.ItemGroupDTO;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -26,7 +26,10 @@ public class ItemsMapper {
     }
 
     public ItemGroup toDomain(CreateItemGroupDTO createItemGroupDTO){
-        return new ItemGroup(itemsRepository.getById(createItemGroupDTO.getItemId()), createItemGroupDTO.getAmount());
+        return new ItemGroup(
+                itemsRepository.getById(createItemGroupDTO.getItemId())
+                        .orElseThrow(() -> new ItemNotFoundException("Item with id " + createItemGroupDTO.getItemId() + " was not found")),
+                createItemGroupDTO.getAmount());
     }
 
     public List<ItemGroup> toDomain(List<CreateItemGroupDTO> createItemGroupDTOList){

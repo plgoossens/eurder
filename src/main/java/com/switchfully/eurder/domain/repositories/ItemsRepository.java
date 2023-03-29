@@ -1,18 +1,16 @@
 package com.switchfully.eurder.domain.repositories;
 
 import com.switchfully.eurder.domain.models.Item;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Optional;
 
 @Repository
 public class ItemsRepository {
 
-    private Map<String, Item> itemsDB;
+    private final Map<String, Item> itemsDB;
 
     public ItemsRepository() {
         itemsDB = new HashMap<>();
@@ -22,7 +20,7 @@ public class ItemsRepository {
         itemsDB.put(item.getId(), item);
     }
 
-    public Item getById(String id){
-        return itemsDB.get(id);
+    public Optional<Item> getById(String id){
+        return Optional.ofNullable(itemsDB.get(id));
     }
 }

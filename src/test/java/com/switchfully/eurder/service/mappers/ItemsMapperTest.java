@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
 import static com.switchfully.eurder.TestsUtils.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -59,7 +61,7 @@ class ItemsMapperTest {
         // Given
         CreateItemGroupDTO input = getDummyCreateItemGroupDTO();
         ItemGroup expected = getDummyItemGroup();
-        Mockito.when(itemsRepository.getById(input.getItemId())).thenReturn(expected.getItem());
+        Mockito.when(itemsRepository.getById(input.getItemId())).thenReturn(Optional.of(expected.getItem()));
 
         // When
         ItemGroup result = itemsMapper.toDomain(input);

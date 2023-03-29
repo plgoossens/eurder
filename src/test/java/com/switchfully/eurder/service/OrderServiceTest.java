@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
 import static com.switchfully.eurder.TestsUtils.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -38,8 +40,8 @@ class OrderServiceTest {
         CreateOrderDTO input = getDummyCreateOrderDTO();
         Order order = getDummyOrder();
         Mockito.when(ordersMapper.toDomain(input)).thenReturn(order);
-        Mockito.when(customersRepository.getById(input.getCustomerId())).thenReturn(getDummyCustomer());
-        Mockito.when(itemsRepository.getById(input.getItems().get(0).getItemId())).thenReturn(getDummyItem());
+        Mockito.when(customersRepository.getById(input.getCustomerId())).thenReturn(Optional.of(getDummyCustomer()));
+        Mockito.when(itemsRepository.getById(input.getItems().get(0).getItemId())).thenReturn(Optional.of(getDummyItem()));
 
         // When
         ordersService.createOrder(input);
@@ -54,9 +56,7 @@ class OrderServiceTest {
         CreateOrderDTO input = getPartiallyNullDummyCreateOrderDTO();
 
         // When
-        assertThatThrownBy(() -> {
-            ordersService.createOrder(input);
-        }).isInstanceOf(IllegalArgumentException.class)
+        assertThatThrownBy(() -> ordersService.createOrder(input)).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("To create an order, these fields need to be completed: customerId and items");
     }
 
@@ -64,12 +64,10 @@ class OrderServiceTest {
     void createOrder_whenCustomerDoesntExist_thenThrowsCustomerNotFoundException() {
         // Given
         CreateOrderDTO input = getDummyCreateOrderDTO();
-        Mockito.when(customersRepository.getById(input.getCustomerId())).thenReturn(null);
+        Mockito.when(customersRepository.getById(input.getCustomerId())).thenReturn(Optional.empty());
 
         // When
-        assertThatThrownBy(() -> {
-            ordersService.createOrder(input);
-        }).isInstanceOf(CustomerNotFoundException.class)
+        assertThatThrownBy(() -> ordersService.createOrder(input)).isInstanceOf(CustomerNotFoundException.class)
                 .hasMessage("Customer with id " + input.getCustomerId() + " was not found.");
     }
 
@@ -77,13 +75,11 @@ class OrderServiceTest {
     void createOrder_whenItemDoesntExist_thenThrowsItemNotFoundException() {
         // Given
         CreateOrderDTO input = getDummyCreateOrderDTO();
-        Mockito.when(customersRepository.getById(input.getCustomerId())).thenReturn(getDummyCustomer());
-        Mockito.when(itemsRepository.getById(input.getItems().get(0).getItemId())).thenReturn(null);
+        Mockito.when(customersRepository.getById(input.getCustomerId())).thenReturn(Optional.of(getDummyCustomer()));
+        Mockito.when(itemsRepository.getById(input.getItems().get(0).getItemId())).thenReturn(Optional.empty());
 
         // When
-        assertThatThrownBy(() -> {
-            ordersService.createOrder(input);
-        }).isInstanceOf(ItemNotFoundException.class)
+        assertThatThrownBy(() -> ordersService.createOrder(input)).isInstanceOf(ItemNotFoundException.class)
                 .hasMessage("Item with id " + input.getItems().get(0).getItemId() + " was not found.");
     }
 }

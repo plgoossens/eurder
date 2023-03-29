@@ -43,10 +43,7 @@ public class CustomersService {
     }
 
     public Customer getCustomerById(String id) {
-        Customer customer = customersRepository.getById(id);
-        if(customer == null){
-            throw new CustomerNotFoundException("Customer with id " + id + " was not found.");
-        }
-        return customer;
+        return customersRepository.getById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " was not found."));
     }
 }

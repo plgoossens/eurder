@@ -22,7 +22,7 @@ public class CustomersRepository {
         customersDB.put(customer.getId(), customer);
     }
 
-    public Customer getById(String id){
-        return customersDB.get(id);
+    public Optional<Customer> getById(String id){
+        return Optional.ofNullable(customersDB.get(id));
     }
 }
