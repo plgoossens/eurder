@@ -1,6 +1,5 @@
 package com.switchfully.eurder.api;
 
-import com.switchfully.eurder.service.dto.CreateCustomerDTO;
 import com.switchfully.eurder.service.dto.CreateItemDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
 import io.restassured.RestAssured;
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -18,6 +18,7 @@ class ItemsControllerTest {
     @LocalServerPort
     private int port;
 
+    @DirtiesContext
     @Test
     void addAnItem_whenGivingFullCreateItemDTO_thenReturnsIdDTO() {
         // Given
