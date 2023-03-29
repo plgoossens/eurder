@@ -4,18 +4,20 @@ import java.util.List;
 
 public class CreateOrderDTO {
 
-    private final String customerId;
-    private final List<CreateItemGroupDTO> items;
-    public CreateOrderDTO(String customerId, List<CreateItemGroupDTO> items) {
-        this.customerId = customerId;
-        this.items = items;
+    private List<CreateItemGroupDTO> items;
+
+    public CreateOrderDTO() {
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public CreateOrderDTO(List<CreateItemGroupDTO> items) {
+        this.items = items;
     }
 
     public List<CreateItemGroupDTO> getItems() {
         return items;
+    }
+
+    public void setItems(List<CreateItemGroupDTO> items) {
+        this.items = items;
     }
 }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ class OrdersControllerTest {
     @LocalServerPort
     private int port;
 
+    @DirtiesContext
     @Test
     void createOrder_whenGivingFullCreateOrderDTO_thenReturnsOrderDTO() {
         // Given
@@ -29,15 +31,15 @@ class OrdersControllerTest {
         IdDTO item2 = addDummyItem();
         IdDTO item3 = addDummyItem();
 
-        IdDTO customer = addDummyCustomer();
+        addDummyCustomer();
 
-        CreateOrderDTO createOrderDTO = new CreateOrderDTO(customer.getId(), List.of(new CreateItemGroupDTO(item1.getId(), 1), new CreateItemGroupDTO(item2.getId(), 1), new CreateItemGroupDTO(item3.getId(), 1)));
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(List.of(new CreateItemGroupDTO(item1.getId(), 1), new CreateItemGroupDTO(item2.getId(), 1), new CreateItemGroupDTO(item3.getId(), 1)));
 
         // When
-
         OrderDTO result = RestAssured
                 .given()
                 .contentType(ContentType.JSON)
+                .auth().preemptive().basic("customer", "password")
                 .body(createOrderDTO)
                 .baseUri("http://localhost")
                 .port(port)
@@ -59,17 +61,19 @@ class OrdersControllerTest {
                 .matches(orderDTO -> orderDTO.getItems().get(2).getItemId().equals(item3.getId()));
     }
 
+    @DirtiesContext
     @Test
     void createOrder_whenGivingEmptyList_thenReturnsBadRequestHttpStatus() {
         // Given
-        IdDTO customer = addDummyCustomer();
+        addDummyCustomer();
 
-        CreateOrderDTO createOrderDTO = new CreateOrderDTO(customer.getId(), List.of());
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(List.of());
 
         // When
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
+                .auth().preemptive().basic("customer", "password")
                 .body(createOrderDTO)
                 .baseUri("http://localhost")
                 .port(port)
@@ -80,17 +84,19 @@ class OrdersControllerTest {
                 .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
+    @DirtiesContext
     @Test
     void createOrder_whenGivingNullList_thenReturnsBadRequestHttpStatus() {
         // Given
-        IdDTO customer = addDummyCustomer();
+        addDummyCustomer();
 
-        CreateOrderDTO createOrderDTO = new CreateOrderDTO(customer.getId(), null);
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(null);
 
         // When
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
+                .auth().preemptive().basic("customer", "password")
                 .body(createOrderDTO)
                 .baseUri("http://localhost")
                 .port(port)
@@ -101,19 +107,21 @@ class OrdersControllerTest {
                 .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
+    @DirtiesContext
     @Test
-    void createOrder_whenCustomerDoesntExist_thenReturnsBadRequestHttpStatus() {
+    void createOrder_whenCustomerDoesntExist_thenReturnsUnauthorizedHttpStatus() {
         // Given
         IdDTO item1 = addDummyItem();
         IdDTO item2 = addDummyItem();
         IdDTO item3 = addDummyItem();
 
-        CreateOrderDTO createOrderDTO = new CreateOrderDTO("customerid", List.of(new CreateItemGroupDTO(item1.getId(), 1), new CreateItemGroupDTO(item2.getId(), 1), new CreateItemGroupDTO(item3.getId(), 1)));
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(List.of(new CreateItemGroupDTO(item1.getId(), 1), new CreateItemGroupDTO(item2.getId(), 1), new CreateItemGroupDTO(item3.getId(), 1)));
 
         // When
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
+                .auth().preemptive().basic("customer", "password")
                 .body(createOrderDTO)
                 .baseUri("http://localhost")
                 .port(port)
@@ -121,23 +129,25 @@ class OrdersControllerTest {
                 .post("/orders")
                 .then()
                 .assertThat()
-                .statusCode(HttpStatus.NOT_FOUND.value());
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
     }
 
+    @DirtiesContext
     @Test
     void createOrder_whenItemDoesntExist_thenReturnsBadRequestHttpStatus() {
         // Given
         IdDTO item1 = addDummyItem();
         IdDTO item3 = addDummyItem();
 
-        IdDTO customer = addDummyCustomer();
+        addDummyCustomer();
 
-        CreateOrderDTO createOrderDTO = new CreateOrderDTO(customer.getId(), List.of(new CreateItemGroupDTO(item1.getId(), 1), new CreateItemGroupDTO("item2Id", 1), new CreateItemGroupDTO(item3.getId(), 1)));
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(List.of(new CreateItemGroupDTO(item1.getId(), 1), new CreateItemGroupDTO("item2Id", 1), new CreateItemGroupDTO(item3.getId(), 1)));
 
         // When
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)
+                .auth().preemptive().basic("customer", "password")
                 .body(createOrderDTO)
                 .baseUri("http://localhost")
                 .port(port)
@@ -152,6 +162,7 @@ class OrdersControllerTest {
         return RestAssured
                 .given()
                 .contentType(ContentType.JSON)
+                .auth().preemptive().basic("admin", "admin")
                 .body(getDummyCreateItemDTO())
                 .baseUri("http://localhost")
                 .port(port)
@@ -162,17 +173,14 @@ class OrdersControllerTest {
                 .as(IdDTO.class);
     }
 
-    private IdDTO addDummyCustomer(){
-        return RestAssured
+    private void addDummyCustomer(){
+        RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(getDummyCreateCustomerDTO())
+                .body(getDummyCreateCustomerWrapper())
                 .baseUri("http://localhost")
                 .port(port)
                 .when()
-                .post("/customers")
-                .then()
-                .extract()
-                .as(IdDTO.class);
+                .post("/customers");
     }
 }

@@ -29,6 +29,7 @@ class ItemsControllerTest {
                 .given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
+                .auth().preemptive().basic("admin", "admin")
                 .body(input)
                 .baseUri("http://localhost")
                 .port(port)

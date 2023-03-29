@@ -5,6 +5,7 @@ import com.switchfully.eurder.domain.models.Item;
 import com.switchfully.eurder.domain.models.ItemGroup;
 import com.switchfully.eurder.domain.models.Order;
 import com.switchfully.eurder.service.dto.*;
+import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +26,9 @@ public class TestsUtils {
 
     private static final String ORDER_ID = "order-id-123456";
     private static final double ORDER_PRICE = ITEM_PRICE*ITEM_AMOUNT;
+
+    private static final String CUSTOMER_USERNAME = "customer";
+    private static final String CUSTOMER_PASSWORD = "password";
 
     public static Item getDummyItem(){
         return new Item(ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT);
@@ -75,11 +79,11 @@ public class TestsUtils {
     }
 
     public static CreateOrderDTO getDummyCreateOrderDTO(){
-        return new CreateOrderDTO(CUSTOMER_ID, List.of(getDummyCreateItemGroupDTO()));
+        return new CreateOrderDTO(List.of(getDummyCreateItemGroupDTO()));
     }
 
     public static CreateOrderDTO getPartiallyNullDummyCreateOrderDTO(){
-        return new CreateOrderDTO(null, List.of(getDummyCreateItemGroupDTO()));
+        return new CreateOrderDTO(null);
     }
 
     public static Order getDummyOrder(){
@@ -88,6 +92,14 @@ public class TestsUtils {
 
     public static OrderDTO getDummyOrderDTO(){
         return new OrderDTO(ORDER_ID, CUSTOMER_ID, ORDER_PRICE, List.of(getDummyItemGroupInStockDTO()));
+    }
+
+    public static CreateCredentialsDTO getDummyCreateCredentialsDTO(){
+        return new CreateCredentialsDTO(CUSTOMER_USERNAME, CUSTOMER_PASSWORD);
+    }
+
+    public static CreateCustomerWrapper getDummyCreateCustomerWrapper(){
+        return new CreateCustomerWrapper(getDummyCreateCustomerDTO(), getDummyCreateCredentialsDTO());
     }
 
 }

@@ -5,6 +5,7 @@ import com.switchfully.eurder.domain.repositories.CustomersRepository;
 import com.switchfully.eurder.exceptions.exceptions.CustomerNotFoundException;
 import com.switchfully.eurder.service.dto.CreateCustomerDTO;
 import com.switchfully.eurder.service.mappers.CustomersMapper;
+import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,19 +20,20 @@ public class CustomersServiceTest {
     private CustomersService customersService;
     private CustomersMapper customersMapper;
     private CustomersRepository customersRepository;
+    private CredentialsService credentialsService;
 
     @BeforeEach
     void setup(){
         customersMapper = Mockito.mock(CustomersMapper.class);
         customersRepository = Mockito.mock(CustomersRepository.class);
-        customersService = new CustomersService(customersMapper, customersRepository);
+        credentialsService = Mockito.mock(CredentialsService.class);
+        customersService = new CustomersService(customersMapper, customersRepository, credentialsService);
     }
 
 
     @Test
     void createCustomer_whenCreateCustomerDTOPartiallyNull_thenThrowsIllegalArgumentException() {
-        CreateCustomerDTO createCustomerDTO = getPartiallyNullDummyCreateCustomerDTO();
-        assertThatThrownBy(() -> customersService.createCustomer(createCustomerDTO)).isInstanceOf(IllegalArgumentException.class)
+        assertThatThrownBy(() -> customersService.createCustomer(new CreateCustomerWrapper(getPartiallyNullDummyCreateCustomerDTO(), getDummyCreateCredentialsDTO()))).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("To create a customer, these fields need to be completed : firstName, lastName, email, address and phoneNumber.");
     }
 
@@ -40,11 +42,12 @@ public class CustomersServiceTest {
         //Given
         CreateCustomerDTO createCustomerDTO = getDummyCreateCustomerDTO();
         Customer customer = getDummyCustomer();
+        CreateCustomerWrapper createCustomerWrapper = new CreateCustomerWrapper(createCustomerDTO, getDummyCreateCredentialsDTO());
 
         Mockito.when(customersMapper.toDomain(createCustomerDTO)).thenReturn(customer);
 
         //When
-        customersService.createCustomer(createCustomerDTO);
+        customersService.createCustomer(createCustomerWrapper);
 
         //Then
         Mockito.verify(customersRepository).add(customer);

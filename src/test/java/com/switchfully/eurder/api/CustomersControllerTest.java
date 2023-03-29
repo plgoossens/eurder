@@ -3,9 +3,11 @@ package com.switchfully.eurder.api;
 import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.service.dto.CreateCustomerDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
+import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
+import static com.switchfully.eurder.TestsUtils.*;
 import static org.assertj.core.api.Assertions.*;
 import io.restassured.RestAssured;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +25,7 @@ class CustomersControllerTest {
     @Test
     void createCustomer_whenGivingFullCreateCustomerDTO_thenReturnsIdDTO() {
         // Given
-        CreateCustomerDTO input = new CreateCustomerDTO("first name", "last name", "email@address.com", "address", "025556677");
+        CreateCustomerWrapper input = getDummyCreateCustomerWrapper();
 
         // When
         IdDTO result = RestAssured
@@ -49,7 +51,8 @@ class CustomersControllerTest {
     @Test
     void createCustomer_whenGivingPartiallyEmptyCreateCustomerDTO_thenReturnsBadRequestHttpStatus() {
         // Given
-        CreateCustomerDTO input = new CreateCustomerDTO("first name", null, null, "address", "025556677");
+        CreateCustomerDTO createCustomerDTO = new CreateCustomerDTO("first name", null, null, "address", "025556677");
+        CreateCustomerWrapper input = new CreateCustomerWrapper(createCustomerDTO, getDummyCreateCredentialsDTO());
 
         // When
         RestAssured
@@ -72,6 +75,7 @@ class CustomersControllerTest {
                 .accept(ContentType.JSON)
                 .baseUri("http://localhost")
                 .port(port)
+                .auth().preemptive().basic("admin", "admin")
                 .when()
                 .get("/customers")
                 .then()
@@ -89,13 +93,13 @@ class CustomersControllerTest {
     @Test
     void getCustomersList_whenCustomersListIsNotEmpty() {
         addCustomer();
-        addCustomer();
 
         Customer[] result = RestAssured
                 .given()
                 .accept(ContentType.JSON)
                 .baseUri("http://localhost")
                 .port(port)
+                .auth().preemptive().basic("admin", "admin")
                 .when()
                 .get("/customers")
                 .then()
@@ -107,19 +111,21 @@ class CustomersControllerTest {
         assertThat(result)
                 .isNotNull()
                 .isNotEmpty();
-        assertThat(result.length).isEqualTo(2);
+        assertThat(result.length).isEqualTo(1);
     }
 
     @DirtiesContext
     @Test
     void getCustomerByID_whenCustomerExists() {
         String id = addCustomer();
+        Customer expected = getDummyCustomer();
 
         Customer result = RestAssured
                 .given()
                 .accept(ContentType.JSON)
                 .baseUri("http://localhost")
                 .port(port)
+                .auth().preemptive().basic("admin", "admin")
                 .when()
                 .get("/customers/"+id)
                 .then()
@@ -131,11 +137,11 @@ class CustomersControllerTest {
         assertThat(result)
                 .isNotNull()
                 .matches(customer -> customer.getId().equals(id))
-                .matches(customer -> customer.getFirstName().equals("first name"))
-                .matches(customer -> customer.getLastName().equals("last name"))
-                .matches(customer -> customer.getEmail().equals("email@address.com"))
-                .matches(customer -> customer.getAddress().equals("address"))
-                .matches(customer -> customer.getPhoneNumber().equals("025556677"));
+                .matches(customer -> customer.getFirstName().equals(expected.getFirstName()))
+                .matches(customer -> customer.getLastName().equals(expected.getLastName()))
+                .matches(customer -> customer.getEmail().equals(expected.getEmail()))
+                .matches(customer -> customer.getAddress().equals(expected.getAddress()))
+                .matches(customer -> customer.getPhoneNumber().equals(expected.getPhoneNumber()));
     }
 
     @Test
@@ -145,6 +151,7 @@ class CustomersControllerTest {
                 .accept(ContentType.JSON)
                 .baseUri("http://localhost")
                 .port(port)
+                .auth().preemptive().basic("admin", "admin")
                 .when()
                 .get("/customers/fakeId")
                 .then()
@@ -153,13 +160,11 @@ class CustomersControllerTest {
     }
 
     private String addCustomer() {
-        CreateCustomerDTO input = new CreateCustomerDTO("first name", "last name", "email@address.com", "address", "025556677");
-
         // When
         IdDTO idDTO = RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(input)
+                .body(getDummyCreateCustomerWrapper())
                 .baseUri("http://localhost")
                 .port(port)
                 .when()

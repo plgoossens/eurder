@@ -6,6 +6,7 @@ import com.switchfully.eurder.exceptions.exceptions.CustomerNotFoundException;
 import com.switchfully.eurder.service.dto.CreateCustomerDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
 import com.switchfully.eurder.service.mappers.CustomersMapper;
+import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -15,15 +16,19 @@ public class CustomersService {
 
     private final CustomersMapper customersMapper;
     private final CustomersRepository customersRepository;
+    private final CredentialsService credentialsService;
 
-    public CustomersService(CustomersMapper customersMapper, CustomersRepository customersRepository) {
+    public CustomersService(CustomersMapper customersMapper, CustomersRepository customersRepository, CredentialsService credentialsService) {
         this.customersMapper = customersMapper;
         this.customersRepository = customersRepository;
+        this.credentialsService = credentialsService;
     }
 
-    public IdDTO createCustomer(CreateCustomerDTO createCustomerDTO) {
-        validateCreateCustomerDTO(createCustomerDTO);
-        Customer customer = customersMapper.toDomain(createCustomerDTO);
+    public IdDTO createCustomer(CreateCustomerWrapper createCustomerWrapper) {
+        validateCreateCustomerDTO(createCustomerWrapper.getCustomer());
+        credentialsService.validateUsernameDoesntExist(createCustomerWrapper.getCredentials().getUsername());
+        Customer customer = customersMapper.toDomain(createCustomerWrapper.getCustomer());
+        credentialsService.addCustomer(createCustomerWrapper.getCredentials().getUsername(), createCustomerWrapper.getCredentials().getPassword(), customer.getId());
         customersRepository.add(customer);
         return customersMapper.toIdDTO(customer);
     }

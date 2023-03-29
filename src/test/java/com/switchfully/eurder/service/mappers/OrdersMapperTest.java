@@ -1,5 +1,6 @@
 package com.switchfully.eurder.service.mappers;
 
+import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.domain.models.Order;
 import com.switchfully.eurder.service.dto.CreateOrderDTO;
 import com.switchfully.eurder.service.dto.OrderDTO;
@@ -27,17 +28,17 @@ class OrdersMapperTest {
     void toDomain() {
         // Given
         CreateOrderDTO input = getDummyCreateOrderDTO();
+        Customer customer = getDummyCustomer();
         Order expected = getDummyOrder();
 
         Mockito.when(itemsMapper.toDomain(input.getItems())).thenReturn(List.of(getDummyItemGroup()));
 
         // When
-        Order result = ordersMapper.toDomain(input);
+        Order result = ordersMapper.toDomain(input, customer);
 
         // Then
         assertThat(result)
                 .isNotNull()
-                .matches(order -> order.getCustomerId().equals(expected.getCustomerId()))
                 .matches(order -> order.calculateTotalPrice() == expected.calculateTotalPrice())
                 .matches(order -> order.getItems().get(0).getName().equals(expected.getItems().get(0).getName()))
                 .matches(order -> order.getItems().get(0).getDescription().equals(expected.getItems().get(0).getDescription()))

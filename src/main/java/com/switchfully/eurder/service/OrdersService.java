@@ -1,5 +1,6 @@
 package com.switchfully.eurder.service;
 
+import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.domain.models.Order;
 import com.switchfully.eurder.domain.repositories.CustomersRepository;
 import com.switchfully.eurder.domain.repositories.ItemsRepository;
@@ -27,19 +28,18 @@ public class OrdersService {
         this.itemsRepository = itemsRepository;
     }
 
-    public OrderDTO createOrder(CreateOrderDTO createOrderDTO) {
+    public OrderDTO createOrder(CreateOrderDTO createOrderDTO, String customerId) {
         validateCreateOrderDTO(createOrderDTO);
-        Order order = ordersMapper.toDomain(createOrderDTO);
+        Customer customer = customersRepository.getById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + customerId + " was not found."));
+        Order order = ordersMapper.toDomain(createOrderDTO, customer);
         ordersRepository.add(order);
         return ordersMapper.toOrderDTO(order);
     }
 
     private void validateCreateOrderDTO(CreateOrderDTO createOrderDTO){
-        if(createOrderDTO.getCustomerId() == null || createOrderDTO.getItems() == null || createOrderDTO.getItems().isEmpty()){
-            throw new IllegalArgumentException("To create an order, these fields need to be completed: customerId and items");
-        }
-        if(customersRepository.getById(createOrderDTO.getCustomerId()).isEmpty()){
-            throw new CustomerNotFoundException("Customer with id " + createOrderDTO.getCustomerId() + " was not found.");
+        if(createOrderDTO.getItems() == null || createOrderDTO.getItems().isEmpty()){
+            throw new IllegalArgumentException("To create an order, the items list must not be empty");
         }
         for(CreateItemGroupDTO createItemGroupDTO : createOrderDTO.getItems()){
             if(itemsRepository.getById(createItemGroupDTO.getItemId()).isEmpty()){
