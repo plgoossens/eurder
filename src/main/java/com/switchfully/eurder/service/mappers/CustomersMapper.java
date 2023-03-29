@@ -12,6 +12,6 @@ public class CustomersMapper {
     }
 
     public IdDTO toIdDTO(Customer customer) {
-        return new IdDTO(customer.getId().toString());
+        return new IdDTO(customer.getId());
     }
 }

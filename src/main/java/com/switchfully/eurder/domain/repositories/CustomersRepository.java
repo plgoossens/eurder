@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 public class CustomersRepository {
 
-    private Map<UUID, Customer> customersDB;
+    private Map<String, Customer> customersDB;
 
     public CustomersRepository() {
         this.customersDB = new HashMap<>();
@@ -18,5 +18,9 @@ public class CustomersRepository {
 
     public void add(Customer customer) {
         customersDB.put(customer.getId(), customer);
+    }
+
+    public Customer getById(String id){
+        return customersDB.get(id);
     }
 }

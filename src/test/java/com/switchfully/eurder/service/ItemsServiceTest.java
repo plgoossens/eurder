@@ -8,14 +8,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static com.switchfully.eurder.TestsUtils.*;
 import static org.assertj.core.api.Assertions.*;
 
-class ItemsServiceTest {
-
-    private static final String ITEM_NAME = "Item";
-    private static final String ITEM_DESCRIPTION = "Description";
-    private static final Double ITEM_PRICE = 9.99;
-    private static final Integer ITEM_AMOUNT = 5;
+public class ItemsServiceTest {
 
     private ItemsService itemsService;
     private ItemsRepository itemsRepository;
@@ -67,21 +63,5 @@ class ItemsServiceTest {
 
         // Then
         Mockito.verify(itemsRepository).add(item);
-    }
-
-    private Item getDummyItem(){
-        return new Item(ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT);
-    }
-
-    private CreateItemDTO getPartiallyNullDummyCreateItemDTO(){
-        return new CreateItemDTO(ITEM_NAME, null, ITEM_PRICE, null);
-    }
-
-    private CreateItemDTO getDummyCreateItemDTOWithNegativeValues(){
-        return new CreateItemDTO(ITEM_NAME, ITEM_DESCRIPTION, -ITEM_PRICE, ITEM_AMOUNT);
-    }
-
-    private CreateItemDTO getDummyCreateItemDTO(){
-        return new CreateItemDTO(ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT);
     }
 }

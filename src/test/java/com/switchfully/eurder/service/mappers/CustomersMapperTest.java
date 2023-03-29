@@ -7,16 +7,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.switchfully.eurder.TestsUtils.getDummyCreateCustomerDTO;
+import static com.switchfully.eurder.TestsUtils.getDummyCustomer;
 import static org.assertj.core.api.Assertions.*;
 
 class CustomersMapperTest {
-
-    final String firstName = "firstName";
-    final String lastName = "lastName";
-    final String email = "email@address.com";
-    final String address = "Address 1, 1000 AddressCity";
-    final String phoneNumber = "025556677";
-
     private CustomersMapper customersMapper;
 
     @BeforeEach
@@ -51,13 +46,5 @@ class CustomersMapperTest {
 
         // Then
         assertThat(result.getId()).isEqualTo(input.getId().toString());
-    }
-
-    private Customer getDummyCustomer(){
-        return new Customer(firstName, lastName, email, address, phoneNumber);
-    }
-
-    private CreateCustomerDTO getDummyCreateCustomerDTO(){
-        return new CreateCustomerDTO(firstName, lastName, email, address, phoneNumber);
     }
 }
