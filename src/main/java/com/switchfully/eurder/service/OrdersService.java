@@ -10,8 +10,11 @@ import com.switchfully.eurder.exceptions.exceptions.ItemNotFoundException;
 import com.switchfully.eurder.service.dto.CreateItemGroupDTO;
 import com.switchfully.eurder.service.dto.CreateOrderDTO;
 import com.switchfully.eurder.service.dto.OrderDTO;
+import com.switchfully.eurder.service.dto.OrderReportDTO;
 import com.switchfully.eurder.service.mappers.OrdersMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
 
 @Service
 public class OrdersService {
@@ -33,6 +36,7 @@ public class OrdersService {
         Customer customer = customersRepository.getById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + customerId + " was not found."));
         Order order = ordersMapper.toDomain(createOrderDTO, customer);
+        itemsRepository.updateStockForOrder(order);
         ordersRepository.add(order);
         return ordersMapper.toOrderDTO(order);
     }
@@ -45,6 +49,23 @@ public class OrdersService {
             if(itemsRepository.getById(createItemGroupDTO.getItemId()).isEmpty()){
                 throw new ItemNotFoundException("Item with id " + createItemGroupDTO.getItemId() + " was not found.");
             }
+            if(createItemGroupDTO.getAmount() < 1){
+                throw new IllegalArgumentException("To create an order, the amount of ordered items must ge greater than zero for each item.");
+            }
         }
+    }
+
+    public OrderReportDTO getOrdersReport(String customerId) {
+        Collection<Order> orders = ordersRepository.getOrdersByCustomerId(customerId);
+        return new OrderReportDTO(
+                ordersMapper.toOrderDTO(orders),
+                calculateTotalPriceOfOrders(orders));
+    }
+
+    public double calculateTotalPriceOfOrders(Collection<Order> orders){
+        return orders.stream()
+                .map(Order::calculateTotalPrice)
+                .reduce(Double::sum)
+                .orElse(0.0);
     }
 }

@@ -103,4 +103,8 @@ public class TestsUtils {
         return new Credentials(CUSTOMER_USERNAME, CUSTOMER_PASSWORD, Role.CUSTOMER, CUSTOMER_ID);
     }
 
+    public static OrderReportDTO getDummyOrderReportDTO(){
+        return new OrderReportDTO(List.of(getDummyOrderDTO()), ORDER_PRICE);
+    }
+
 }

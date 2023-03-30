@@ -38,7 +38,9 @@ public class CustomersController {
     @ResponseStatus(HttpStatus.CREATED)
     public IdDTO createCustomer(@RequestBody CreateCustomerWrapper createCustomerWrapper){
         logger.info("Creating customer");
-        return customersService.createCustomer(createCustomerWrapper);
+        IdDTO idDTO = customersService.createCustomer(createCustomerWrapper);
+        logger.info("Customer " + idDTO.getId() + " created");
+        return idDTO;
     }
 
     @GetMapping(path="/{id}", produces = "application/json")

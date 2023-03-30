@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static com.switchfully.eurder.TestsUtils.*;
@@ -50,6 +52,7 @@ class OrderServiceTest {
 
         // Then
         Mockito.verify(ordersRepository).add(order);
+        Mockito.verify(itemsRepository).updateStockForOrder(order);
     }
 
     @Test
@@ -87,5 +90,29 @@ class OrderServiceTest {
         // When
         assertThatThrownBy(() -> ordersService.createOrder(input, customer.getId())).isInstanceOf(ItemNotFoundException.class)
                 .hasMessage("Item with id " + input.getItems().get(0).getItemId() + " was not found.");
+    }
+
+    @Test
+    void calculateTotalPriceOfOrders() {
+        // Given
+        Collection<Order> input = List.of(getDummyOrder(), getDummyOrder());
+
+        // When
+        double result = ordersService.calculateTotalPriceOfOrders(input);
+
+        // Then
+        assertThat(result).isEqualTo(getDummyOrder().calculateTotalPrice()*2);
+    }
+
+    @Test
+    void calculateTotalPriceOfOrders_whenListIsEmpty_thenReturnsZero() {
+        // Given
+        Collection<Order> input = List.of();
+
+        // When
+        double result = ordersService.calculateTotalPriceOfOrders(input);
+
+        // Then
+        assertThat(result).isEqualTo(0.0);
     }
 }

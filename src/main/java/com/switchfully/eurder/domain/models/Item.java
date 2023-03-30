@@ -7,7 +7,7 @@ public class Item {
     private final String id;
     private final String name;
     private final String description;
-    private double price;
+    private final double price;
     private int amount;
 
     public Item(String name, String description, double price, int amount) {
@@ -40,5 +40,9 @@ public class Item {
 
     public boolean enoughInStock(int neededAmount) {
         return amount-neededAmount >= 0;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 }

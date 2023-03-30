@@ -29,6 +29,8 @@ public class ItemsController {
     public IdDTO addAnItem(@RequestBody CreateItemDTO createItemDTO, @RequestHeader String authorization){
         logger.info("Adding an item");
         credentialsService.validateAuthorization(authorization, Feature.ADD_AN_ITEM);
-        return itemsService.addItem(createItemDTO);
+        IdDTO idDTO = itemsService.addItem(createItemDTO);
+        logger.info("Item " + idDTO.getId() + " added");
+        return idDTO;
     }
 }

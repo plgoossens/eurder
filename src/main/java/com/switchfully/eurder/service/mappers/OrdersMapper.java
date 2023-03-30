@@ -6,6 +6,8 @@ import com.switchfully.eurder.service.dto.CreateOrderDTO;
 import com.switchfully.eurder.service.dto.OrderDTO;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
 @Component
 public class OrdersMapper {
 
@@ -21,5 +23,11 @@ public class OrdersMapper {
 
     public OrderDTO toOrderDTO(Order order) {
         return new OrderDTO(order.getId(), order.calculateTotalPrice(), itemsMapper.toItemGroupDTO(order.getItems()));
+    }
+
+    public Collection<OrderDTO> toOrderDTO(Collection<Order> orders){
+        return orders.stream()
+                .map(this::toOrderDTO)
+                .toList();
     }
 }
