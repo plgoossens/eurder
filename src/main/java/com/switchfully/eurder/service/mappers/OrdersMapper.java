@@ -22,7 +22,7 @@ public class OrdersMapper {
     }
 
     public OrderDTO toOrderDTO(Order order) {
-        return new OrderDTO(order.getId(), order.calculateTotalPrice(), itemsMapper.toItemGroupDTO(order.getItems()));
+        return new OrderDTO(order.getId().toString(), order.calculateTotalPrice(), itemsMapper.toItemGroupDTO(order.getItems()));
     }
 
     public Collection<OrderDTO> toOrderDTO(Collection<Order> orders){

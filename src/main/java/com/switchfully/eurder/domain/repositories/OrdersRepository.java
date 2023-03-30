@@ -6,11 +6,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Repository
 public class OrdersRepository {
 
-    private final Map<String, Order> ordersDB;
+    private final Map<UUID, Order> ordersDB;
 
     public OrdersRepository() {
         this.ordersDB = new HashMap<>();
@@ -20,7 +21,7 @@ public class OrdersRepository {
         ordersDB.put(order.getId(), order);
     }
 
-    public Collection<Order> getOrdersByCustomerId(String customerId){
+    public Collection<Order> getOrdersByCustomerId(UUID customerId){
         return ordersDB.values().stream()
                 .filter(order -> order.getCustomerId().equals(customerId))
                 .toList();

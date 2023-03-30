@@ -170,7 +170,7 @@ class CustomersControllerTest {
 
         assertThat(result)
                 .isNotNull()
-                .matches(customer -> customer.getId().equals(id))
+                .matches(customer -> customer.getId().toString().equals(id))
                 .matches(customer -> customer.getFirstName().equals(expected.getFirstName()))
                 .matches(customer -> customer.getLastName().equals(expected.getLastName()))
                 .matches(customer -> customer.getEmail().equals(expected.getEmail()))

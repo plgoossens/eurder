@@ -1,12 +1,18 @@
 package com.switchfully.eurder.service;
 
 import com.switchfully.eurder.domain.models.Item;
+import com.switchfully.eurder.domain.models.UrgencyLevel;
 import com.switchfully.eurder.domain.repositories.ItemsRepository;
 import com.switchfully.eurder.service.dto.CreateItemDTO;
+import com.switchfully.eurder.service.dto.ItemDTO;
 import com.switchfully.eurder.service.mappers.ItemsMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import static com.switchfully.eurder.TestsUtils.*;
 import static org.assertj.core.api.Assertions.*;
@@ -30,9 +36,7 @@ public class ItemsServiceTest {
         CreateItemDTO createItemDTO = getPartiallyNullDummyCreateItemDTO();
 
         // When
-        assertThatThrownBy(() -> {
-            itemsService.addItem(createItemDTO);
-        }).isInstanceOf(IllegalArgumentException.class)
+        assertThatThrownBy(() -> itemsService.addItem(createItemDTO)).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("To add an item, these fields need to be completed : name, description, price and amount.");
 
     }
@@ -43,9 +47,7 @@ public class ItemsServiceTest {
         CreateItemDTO createItemDTO = getDummyCreateItemDTOWithNegativeValues();
 
         // When
-        assertThatThrownBy(() -> {
-            itemsService.addItem(createItemDTO);
-        }).isInstanceOf(IllegalArgumentException.class)
+        assertThatThrownBy(() -> itemsService.addItem(createItemDTO)).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("To add an item, the price and the amount must be positive.");
 
     }
@@ -63,5 +65,55 @@ public class ItemsServiceTest {
 
         // Then
         Mockito.verify(itemsRepository).add(item);
+    }
+
+    @Test
+    void getItemOverview_withoutParam() {
+        // Given
+        Item itemStockHigh = getDummyItemStockHigh();
+        Item itemStockMedium = getDummyItem();
+        Item itemStockLow = getDummyItemStockLow();
+        Mockito.when(itemsRepository.getAllItems()).thenReturn(List.of(itemStockHigh, itemStockMedium, itemStockLow));
+        Mockito.when(itemsMapper.toItemDTO(itemStockHigh)).thenReturn(getDummyItemDTOStockHigh());
+        Mockito.when(itemsMapper.toItemDTO(itemStockMedium)).thenReturn(getDummyItemDTO());
+        Mockito.when(itemsMapper.toItemDTO(itemStockLow)).thenReturn(getDummyItemDTOStockLow());
+
+        // When
+        Collection<ItemDTO> result = itemsService.getItemOverview(Optional.empty());
+
+        // Then
+        assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(3);
+
+        assertThat(result.stream().toList())
+                .matches(itemDTOS -> itemDTOS.get(0).getUrgencyLevel() == UrgencyLevel.STOCK_LOW)
+                .matches(itemDTOS -> itemDTOS.get(1).getUrgencyLevel() == UrgencyLevel.STOCK_MEDIUM)
+                .matches(itemDTOS -> itemDTOS.get(2).getUrgencyLevel() == UrgencyLevel.STOCK_HIGH);
+    }
+
+    @Test
+    void getItemOverview_withParam() {
+        // Given
+        Item itemStockHigh = getDummyItemStockHigh();
+        Item itemStockMedium = getDummyItem();
+        Item itemStockLow = getDummyItemStockLow();
+        Mockito.when(itemsRepository.getAllItems()).thenReturn(List.of(itemStockHigh, itemStockMedium, itemStockLow));
+        Mockito.when(itemsMapper.toItemDTO(itemStockHigh)).thenReturn(getDummyItemDTOStockHigh());
+        Mockito.when(itemsMapper.toItemDTO(itemStockMedium)).thenReturn(getDummyItemDTO());
+        Mockito.when(itemsMapper.toItemDTO(itemStockLow)).thenReturn(getDummyItemDTOStockLow());
+
+        // When
+        Collection<ItemDTO> result = itemsService.getItemOverview(Optional.of(UrgencyLevel.STOCK_MEDIUM));
+
+        // Then
+        assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(result.stream().toList())
+                .matches(itemDTOS -> itemDTOS.get(0).getUrgencyLevel() == UrgencyLevel.STOCK_MEDIUM);
     }
 }

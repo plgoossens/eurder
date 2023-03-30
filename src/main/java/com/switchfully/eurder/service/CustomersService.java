@@ -10,6 +10,9 @@ import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.UUID;
+
+import static com.switchfully.eurder.service.Utils.isUUIDValid;
 
 @Service
 public class CustomersService {
@@ -48,7 +51,10 @@ public class CustomersService {
     }
 
     public Customer getCustomerById(String id) {
-        return customersRepository.getById(id)
+        if(!isUUIDValid(id)){
+            throw new CustomerNotFoundException("Customer with id " + id + " was not found.");
+        }
+        return customersRepository.getById(UUID.fromString(id))
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " was not found."));
     }
 }

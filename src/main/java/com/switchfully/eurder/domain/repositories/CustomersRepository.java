@@ -8,7 +8,7 @@ import java.util.*;
 @Repository
 public class CustomersRepository {
 
-    private final Map<String, Customer> customersDB;
+    private final Map<UUID, Customer> customersDB;
 
     public CustomersRepository() {
         this.customersDB = new HashMap<>();
@@ -22,7 +22,7 @@ public class CustomersRepository {
         customersDB.put(customer.getId(), customer);
     }
 
-    public Optional<Customer> getById(String id){
+    public Optional<Customer> getById(UUID id){
         return Optional.ofNullable(customersDB.get(id));
     }
 }

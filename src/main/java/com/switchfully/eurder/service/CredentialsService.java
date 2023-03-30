@@ -9,6 +9,7 @@ import com.switchfully.eurder.exceptions.exceptions.UserAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.UUID;
 
 @Service
 public class CredentialsService {
@@ -19,11 +20,11 @@ public class CredentialsService {
         this.credentialsRepository = credentialsRepository;
     }
 
-    public void addCustomer(String username, String password, String customerId){
+    public void addCustomer(String username, String password, UUID customerId){
         credentialsRepository.add(new Credentials(username, password, Role.CUSTOMER, customerId));
     }
 
-    public String validateAuthorization(String authorization, Feature feature){
+    public UUID validateAuthorization(String authorization, Feature feature){
         String decodedUsernameAndPassword = new String(Base64.getDecoder().decode(authorization.substring("Basic ".length())));
         String username = decodedUsernameAndPassword.substring(0, decodedUsernameAndPassword.indexOf(":"));
         String password = decodedUsernameAndPassword.substring(decodedUsernameAndPassword.indexOf(":") + 1);

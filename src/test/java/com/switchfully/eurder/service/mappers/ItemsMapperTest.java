@@ -53,7 +53,7 @@ class ItemsMapperTest {
         IdDTO result = itemsMapper.toIdDTO(input);
 
         // Then
-        assertThat(result.getId()).isEqualTo(input.getId());
+        assertThat(result.getId()).isEqualTo(input.getId().toString());
     }
 
     @Test

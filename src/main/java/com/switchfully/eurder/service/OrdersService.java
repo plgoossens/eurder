@@ -15,6 +15,7 @@ import com.switchfully.eurder.service.mappers.OrdersMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @Service
 public class OrdersService {
@@ -31,7 +32,7 @@ public class OrdersService {
         this.itemsRepository = itemsRepository;
     }
 
-    public OrderDTO createOrder(CreateOrderDTO createOrderDTO, String customerId) {
+    public OrderDTO createOrder(CreateOrderDTO createOrderDTO, UUID customerId) {
         validateCreateOrderDTO(createOrderDTO);
         Customer customer = customersRepository.getById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + customerId + " was not found."));
@@ -55,7 +56,7 @@ public class OrdersService {
         }
     }
 
-    public OrderReportDTO getOrdersReport(String customerId) {
+    public OrderReportDTO getOrdersReport(UUID customerId) {
         Collection<Order> orders = ordersRepository.getOrdersByCustomerId(customerId);
         return new OrderReportDTO(
                 ordersMapper.toOrderDTO(orders),

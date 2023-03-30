@@ -60,7 +60,7 @@ public class CustomersServiceTest {
         Mockito.when(customersRepository.getById(expected.getId())).thenReturn(Optional.of(expected));
 
         // When
-        Customer result = customersService.getCustomerById(expected.getId());
+        Customer result = customersService.getCustomerById(expected.getId().toString());
 
         // Then
         assertThat(result).isEqualTo(expected);

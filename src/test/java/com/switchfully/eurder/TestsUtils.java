@@ -6,22 +6,25 @@ import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public class TestsUtils {
-    private static final String ITEM_ID = "item-id-123456";
+    private static final UUID ITEM_ID = UUID.randomUUID();
     private static final String ITEM_NAME = "Item";
     private static final String ITEM_DESCRIPTION = "Description";
     private static final Double ITEM_PRICE = 9.99;
     private static final Integer ITEM_AMOUNT = 5;
+    private static final Integer ITEM_AMOUNT_STOCK_LOW = 1;
+    private static final Integer ITEM_AMOUNT_STOCK_HIGH = 15;
 
-    private static final String CUSTOMER_ID = "customer-id-123456";
+    private static final UUID CUSTOMER_ID = UUID.randomUUID();
     private static final String CUSTOMER_FIRSTNAME = "firstName";
     private static final String CUSTOMER_LASTNAME = "lastName";
     private static final String CUSTOMER_EMAIL = "email@address.com";
     private static final String CUSTOMER_ADDRESS = "Address 1, 1000 AddressCity";
     private static final String CUSTOMER_PHONENUMBER = "025556677";
 
-    private static final String ORDER_ID = "order-id-123456";
+    private static final UUID ORDER_ID = UUID.randomUUID();
     private static final double ORDER_PRICE = ITEM_PRICE*ITEM_AMOUNT;
 
     private static final String CUSTOMER_USERNAME = "customer";
@@ -29,6 +32,24 @@ public class TestsUtils {
 
     public static Item getDummyItem(){
         return new Item(ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT);
+    }
+    public static Item getDummyItemStockLow(){
+        return new Item(ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT_STOCK_LOW);
+    }
+    public static Item getDummyItemStockHigh(){
+        return new Item(ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT_STOCK_HIGH);
+    }
+
+    public static ItemDTO getDummyItemDTO(){
+        return new ItemDTO(ITEM_ID.toString(), ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT, UrgencyLevel.STOCK_MEDIUM);
+    }
+
+    public static ItemDTO getDummyItemDTOStockLow(){
+        return new ItemDTO(ITEM_ID.toString(), ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT, UrgencyLevel.STOCK_LOW);
+    }
+
+    public static ItemDTO getDummyItemDTOStockHigh(){
+        return new ItemDTO(ITEM_ID.toString(), ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT, UrgencyLevel.STOCK_HIGH);
     }
 
     public static CreateItemDTO getPartiallyNullDummyCreateItemDTO(){
@@ -56,7 +77,7 @@ public class TestsUtils {
     }
 
     public static CreateItemGroupDTO getDummyCreateItemGroupDTO(){
-        return new CreateItemGroupDTO(ITEM_ID, ITEM_AMOUNT);
+        return new CreateItemGroupDTO(ITEM_ID.toString(), ITEM_AMOUNT);
     }
 
     public static ItemGroup getDummyItemGroup(){
@@ -68,11 +89,11 @@ public class TestsUtils {
     }
 
     public static ItemGroupDTO getDummyItemGroupInStockDTO(){
-        return new ItemGroupDTO(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT, LocalDate.now().plusDays(1));
+        return new ItemGroupDTO(ITEM_ID.toString(), ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT, LocalDate.now().plusDays(1));
     }
 
     public static ItemGroupDTO getDummyItemGroupNotInStockDTO(){
-        return new ItemGroupDTO(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT*2, LocalDate.now().plusDays(7));
+        return new ItemGroupDTO(ITEM_ID.toString(), ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT*2, LocalDate.now().plusDays(7));
     }
 
     public static CreateOrderDTO getDummyCreateOrderDTO(){
@@ -88,7 +109,7 @@ public class TestsUtils {
     }
 
     public static OrderDTO getDummyOrderDTO(){
-        return new OrderDTO(ORDER_ID, ORDER_PRICE, List.of(getDummyItemGroupInStockDTO()));
+        return new OrderDTO(ORDER_ID.toString(), ORDER_PRICE, List.of(getDummyItemGroupInStockDTO()));
     }
 
     public static CreateCredentialsDTO getDummyCreateCredentialsDTO(){

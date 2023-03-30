@@ -1,11 +1,17 @@
 package com.switchfully.eurder.service;
 
 import com.switchfully.eurder.domain.models.Item;
+import com.switchfully.eurder.domain.models.UrgencyLevel;
 import com.switchfully.eurder.domain.repositories.ItemsRepository;
 import com.switchfully.eurder.service.dto.CreateItemDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
+import com.switchfully.eurder.service.dto.ItemDTO;
 import com.switchfully.eurder.service.mappers.ItemsMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Optional;
 
 @Service
 public class ItemsService {
@@ -35,5 +41,13 @@ public class ItemsService {
         if(createItemDTO.getPrice() < 0.0 || createItemDTO.getAmount() < 0){
             throw new IllegalArgumentException("To add an item, the price and the amount must be positive.");
         }
+    }
+
+    public Collection<ItemDTO> getItemOverview(Optional<UrgencyLevel> urgencyLevel) {
+        return itemsRepository.getAllItems().stream()
+                .map(itemsMapper::toItemDTO)
+                .sorted(Comparator.comparing(ItemDTO::getUrgencyLevel))
+                .filter(itemDTO -> itemDTO.getUrgencyLevel().equals(urgencyLevel.orElse(itemDTO.getUrgencyLevel())))
+                .toList();
     }
 }

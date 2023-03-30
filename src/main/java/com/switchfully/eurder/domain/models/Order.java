@@ -5,21 +5,21 @@ import java.util.UUID;
 
 public class Order {
 
-    private final String id;
-    private final String customerId;
+    private final UUID id;
+    private final UUID customerId;
     private final List<ItemGroup> items;
 
-    public Order(String customerId, List<ItemGroup> items) {
-        this.id = UUID.randomUUID().toString();
+    public Order(UUID customerId, List<ItemGroup> items) {
+        this.id = UUID.randomUUID();
         this.customerId = customerId;
         this.items = items;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public String getCustomerId() {
+    public UUID getCustomerId() {
         return customerId;
     }
 

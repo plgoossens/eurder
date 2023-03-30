@@ -1,13 +1,15 @@
 package com.switchfully.eurder.domain.models;
 
+import java.util.UUID;
+
 public class Credentials {
 
     private final String username;
     private final String password;
     private final Role role;
-    private final String customerId;
+    private final UUID customerId;
 
-    public Credentials(String username, String password, Role role, String customerId) {
+    public Credentials(String username, String password, Role role, UUID customerId) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -22,7 +24,7 @@ public class Credentials {
         return role;
     }
 
-    public String getCustomerId() {
+    public UUID getCustomerId() {
         return customerId;
     }
 

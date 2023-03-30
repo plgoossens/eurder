@@ -1,24 +1,25 @@
-package com.switchfully.eurder.domain.models;
+package com.switchfully.eurder.service.dto;
 
-import java.util.UUID;
+import com.switchfully.eurder.domain.models.UrgencyLevel;
 
-public class Item {
-
-    private final UUID id;
+public class ItemDTO {
+    private final String id;
     private final String name;
     private final String description;
     private final double price;
-    private int amount;
+    private final int amount;
+    private final UrgencyLevel urgencyLevel;
 
-    public Item(String name, String description, double price, int amount) {
-        this.id = UUID.randomUUID();
+    public ItemDTO(String id, String name, String description, double price, int amount, UrgencyLevel urgencyLevel) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.amount = amount;
+        this.urgencyLevel = urgencyLevel;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -38,11 +39,7 @@ public class Item {
         return amount;
     }
 
-    public boolean enoughInStock(int neededAmount) {
-        return amount-neededAmount >= 0;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public UrgencyLevel getUrgencyLevel() {
+        return urgencyLevel;
     }
 }
