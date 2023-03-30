@@ -88,7 +88,7 @@ public class TestsUtils {
     }
 
     public static OrderDTO getDummyOrderDTO(){
-        return new OrderDTO(ORDER_ID, CUSTOMER_ID, ORDER_PRICE, List.of(getDummyItemGroupInStockDTO()));
+        return new OrderDTO(ORDER_ID, ORDER_PRICE, List.of(getDummyItemGroupInStockDTO()));
     }
 
     public static CreateCredentialsDTO getDummyCreateCredentialsDTO(){

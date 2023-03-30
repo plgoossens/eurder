@@ -20,6 +20,6 @@ public class OrdersMapper {
     }
 
     public OrderDTO toOrderDTO(Order order) {
-        return new OrderDTO(order.getId(), order.getCustomerId(), order.calculateTotalPrice(), itemsMapper.toItemGroupDTO(order.getItems()));
+        return new OrderDTO(order.getId(), order.calculateTotalPrice(), itemsMapper.toItemGroupDTO(order.getItems()));
     }
 }

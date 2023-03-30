@@ -60,12 +60,11 @@ class OrdersMapperTest {
         // Then
         assertThat(result)
                 .isNotNull()
-                .matches(orderDTO -> orderDTO.getCustomerId().equals(expected.getCustomerId()))
                 .matches(orderDTO -> orderDTO.getTotalPrice() == expected.getTotalPrice())
                 .matches(orderDTO -> orderDTO.getItems().get(0).getItemName().equals(expected.getItems().get(0).getItemName()))
                 .matches(orderDTO -> orderDTO.getItems().get(0).getItemDescription().equals(expected.getItems().get(0).getItemDescription()))
                 .matches(orderDTO -> orderDTO.getItems().get(0).getShippingDate().equals(expected.getItems().get(0).getShippingDate()))
                 .matches(orderDTO -> orderDTO.getItems().get(0).getUnitPrice() == expected.getItems().get(0).getUnitPrice())
-                .matches(orderDTO -> orderDTO.getItems().get(0).getAmount() == expected.getItems().get(0).getAmount());
+                .matches(orderDTO -> orderDTO.getItems().get(0).getOrderedAmount() == expected.getItems().get(0).getOrderedAmount());
     }
 }

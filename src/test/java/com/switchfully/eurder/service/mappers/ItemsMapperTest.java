@@ -93,7 +93,7 @@ class ItemsMapperTest {
                 .matches(itemGroupDTO -> itemGroupDTO.getItemDescription().equals(expected.getItemDescription()))
                 .matches(itemGroupDTO -> itemGroupDTO.getShippingDate().equals(expected.getShippingDate()))
                 .matches(itemGroupDTO -> itemGroupDTO.getUnitPrice() == expected.getUnitPrice())
-                .matches(itemGroupDTO -> itemGroupDTO.getAmount() == expected.getAmount());
+                .matches(itemGroupDTO -> itemGroupDTO.getOrderedAmount() == expected.getOrderedAmount());
     }
 
     @Test
@@ -111,6 +111,6 @@ class ItemsMapperTest {
                 .matches(itemGroupDTO -> itemGroupDTO.getItemDescription().equals(expected.getItemDescription()))
                 .matches(itemGroupDTO -> itemGroupDTO.getShippingDate().equals(expected.getShippingDate()))
                 .matches(itemGroupDTO -> itemGroupDTO.getUnitPrice() == expected.getUnitPrice())
-                .matches(itemGroupDTO -> itemGroupDTO.getAmount() == expected.getAmount());
+                .matches(itemGroupDTO -> itemGroupDTO.getOrderedAmount() == expected.getOrderedAmount());
     }
 }

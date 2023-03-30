@@ -8,15 +8,17 @@ public class ItemGroupDTO {
     private final String itemName;
     private final String itemDescription;
     private final double unitPrice;
-    private final int amount;
+    private final int orderedAmount;
+    private final double totalPrice;
     private final LocalDate shippingDate;
 
-    public ItemGroupDTO(String itemId, String itemName, String itemDescription, double unitPrice, int amount, LocalDate shippingDate) {
+    public ItemGroupDTO(String itemId, String itemName, String itemDescription, double unitPrice, int orderedAmount, LocalDate shippingDate) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.itemDescription = itemDescription;
         this.unitPrice = unitPrice;
-        this.amount = amount;
+        this.orderedAmount = orderedAmount;
+        this.totalPrice = orderedAmount*unitPrice;
         this.shippingDate = shippingDate;
     }
 
@@ -36,8 +38,12 @@ public class ItemGroupDTO {
         return unitPrice;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getOrderedAmount() {
+        return orderedAmount;
+    }
+
+    public double getTotalPrice(){
+        return totalPrice;
     }
 
     public LocalDate getShippingDate() {
