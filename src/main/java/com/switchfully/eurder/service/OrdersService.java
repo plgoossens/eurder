@@ -7,14 +7,13 @@ import com.switchfully.eurder.domain.repositories.ItemsRepository;
 import com.switchfully.eurder.domain.repositories.OrdersRepository;
 import com.switchfully.eurder.exceptions.exceptions.CustomerNotFoundException;
 import com.switchfully.eurder.exceptions.exceptions.ItemNotFoundException;
-import com.switchfully.eurder.service.dto.CreateItemGroupDTO;
-import com.switchfully.eurder.service.dto.CreateOrderDTO;
-import com.switchfully.eurder.service.dto.OrderDTO;
-import com.switchfully.eurder.service.dto.OrderReportDTO;
+import com.switchfully.eurder.service.dto.*;
 import com.switchfully.eurder.service.mappers.OrdersMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.switchfully.eurder.service.Utils.isUUIDValid;
@@ -72,5 +71,18 @@ public class OrdersService {
                 .map(Order::calculateTotalPrice)
                 .reduce(Double::sum)
                 .orElse(0.0);
+    }
+
+    public Collection<ItemGroupOrderDTO> getOrderItems(Optional<LocalDate> date) {
+        return ordersRepository.getAllOrders().stream()
+                .flatMap(order ->
+                        ordersMapper.toItemGroupOrderDTO(
+                                order.getItems(),
+                                customersRepository.getById(order.getCustomerId())
+                                        .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + order.getCustomerId() + " was not found"))
+                                        .getAddress())
+                                .stream())
+                .filter(itemGroupOrderDTO -> itemGroupOrderDTO.getShippingDate().equals(date.orElse(itemGroupOrderDTO.getShippingDate())))
+                .toList();
     }
 }

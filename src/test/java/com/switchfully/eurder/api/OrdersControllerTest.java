@@ -9,6 +9,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.switchfully.eurder.TestsUtils.*;
@@ -256,6 +257,59 @@ class OrdersControllerTest {
                 .isNotNull()
                 .matches(orderReport -> orderReport.getTotalPrice() == 0.0)
                 .matches(orderReport -> orderReport.getOrders().size() == 0);
+    }
+
+    @DirtiesContext
+    @Test
+    void getItemsShippingTomorrow(){
+        // Given
+
+        addDummyCustomer();
+        String itemId = addDummyItem().getId();
+
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(List.of(new CreateItemGroupDTO(itemId, ITEM_AMOUNT)));
+
+        // Order with shipping date : tomorrow (items in stock)
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .auth().preemptive().basic("customer", "password")
+                .body(createOrderDTO)
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .post("/orders");
+
+        // Order with shipping date : in one week (items no more in stock)
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .auth().preemptive().basic("customer", "password")
+                .body(createOrderDTO)
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .post("/orders");
+
+        ItemGroupOrderDTO[] items = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .auth().preemptive().basic("admin", "admin")
+                .baseUri("http://localhost")
+                .port(port)
+                .params("shippingDate", LocalDate.now().plusDays(1).toString())
+                .when()
+                .get("/orders/items")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .as(ItemGroupOrderDTO[].class);
+
+        assertThat(items)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
     }
 
     private IdDTO addDummyItem(){

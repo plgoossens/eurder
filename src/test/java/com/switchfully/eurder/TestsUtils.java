@@ -13,7 +13,7 @@ public class TestsUtils {
     private static final String ITEM_NAME = "Item";
     private static final String ITEM_DESCRIPTION = "Description";
     private static final Double ITEM_PRICE = 9.99;
-    private static final Integer ITEM_AMOUNT = 5;
+    public static final Integer ITEM_AMOUNT = 5;
     private static final Integer ITEM_AMOUNT_STOCK_LOW = 1;
     private static final Integer ITEM_AMOUNT_STOCK_HIGH = 15;
 
@@ -98,6 +98,10 @@ public class TestsUtils {
 
     public static ItemGroupDTO getDummyItemGroupNotInStockDTO(){
         return new ItemGroupDTO(ITEM_ID.toString(), ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT*2, LocalDate.now().plusDays(7));
+    }
+
+    public static ItemGroupOrderDTO getDummyItemGroupOrderDTO(){
+        return new ItemGroupOrderDTO(ITEM_ID.toString(), ITEM_NAME, ITEM_DESCRIPTION, ITEM_PRICE, ITEM_AMOUNT, ITEM_PRICE*ITEM_AMOUNT, LocalDate.now().plusDays(1), CUSTOMER_ADDRESS);
     }
 
     public static CreateOrderDTO getDummyCreateOrderDTO(){

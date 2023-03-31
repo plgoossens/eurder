@@ -6,7 +6,7 @@ import static com.switchfully.eurder.domain.models.Feature.*;
 
 public enum Role {
     CUSTOMER(List.of(ORDER_ITEMS, VIEW_ORDERS_REPORT)),
-    ADMIN(List.of(ADD_AN_ITEM, VIEW_ALL_CUSTOMERS, VIEW_A_SINGLE_CUSTOMER, GET_ITEM_OVERVIEW, UPDATE_AN_ITEM));
+    ADMIN(List.of(ADD_AN_ITEM, VIEW_ALL_CUSTOMERS, VIEW_A_SINGLE_CUSTOMER, GET_ITEM_OVERVIEW, UPDATE_AN_ITEM, GET_ORDER_ITEMS));
 
 
     private final List<Feature> featureList;

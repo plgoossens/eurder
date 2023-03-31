@@ -26,4 +26,8 @@ public class OrdersRepository {
                 .filter(order -> order.getCustomerId().equals(customerId))
                 .toList();
     }
+
+    public Collection<Order> getAllOrders(){
+        return ordersDB.values();
+    }
 }

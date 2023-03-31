@@ -1,8 +1,10 @@
 package com.switchfully.eurder.service.mappers;
 
 import com.switchfully.eurder.domain.models.Customer;
+import com.switchfully.eurder.domain.models.ItemGroup;
 import com.switchfully.eurder.domain.models.Order;
 import com.switchfully.eurder.service.dto.CreateOrderDTO;
+import com.switchfully.eurder.service.dto.ItemGroupOrderDTO;
 import com.switchfully.eurder.service.dto.OrderDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,5 +68,27 @@ class OrdersMapperTest {
                 .matches(orderDTO -> orderDTO.getItems().get(0).getShippingDate().equals(expected.getItems().get(0).getShippingDate()))
                 .matches(orderDTO -> orderDTO.getItems().get(0).getUnitPrice() == expected.getItems().get(0).getUnitPrice())
                 .matches(orderDTO -> orderDTO.getItems().get(0).getOrderedAmount() == expected.getItems().get(0).getOrderedAmount());
+    }
+
+    @Test
+    void toItemGroupOrderDTO() {
+        // Given
+        ItemGroup itemGroup = getDummyItemGroup();
+        String address = "address";
+
+        // When
+        ItemGroupOrderDTO result = ordersMapper.toItemGroupOrderDTO(itemGroup, address);
+
+        // Then
+        assertThat(result)
+                .isNotNull()
+                .matches(itemGroupOrderDTO -> itemGroupOrderDTO.getItemId().equals(itemGroup.getItem().getId().toString()))
+                .matches(itemGroupOrderDTO -> itemGroupOrderDTO.getItemName().equals(itemGroup.getName()))
+                .matches(itemGroupOrderDTO -> itemGroupOrderDTO.getItemDescription().equals(itemGroup.getDescription()))
+                .matches(itemGroupOrderDTO -> itemGroupOrderDTO.getOrderedAmount() == itemGroup.getAmount())
+                .matches(itemGroupOrderDTO -> itemGroupOrderDTO.getTotalPrice() == itemGroup.calculateTotalPrice())
+                .matches(itemGroupOrderDTO -> itemGroupOrderDTO.getUnitPrice() == itemGroup.getUnitPrice())
+                .matches(itemGroupOrderDTO -> itemGroupOrderDTO.getShippingDate().equals(itemGroup.getShippingDate()))
+                .matches(itemGroupOrderDTO -> itemGroupOrderDTO.getAddress().equals(address));
     }
 }

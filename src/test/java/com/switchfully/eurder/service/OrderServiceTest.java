@@ -8,11 +8,13 @@ import com.switchfully.eurder.domain.repositories.OrdersRepository;
 import com.switchfully.eurder.exceptions.exceptions.CustomerNotFoundException;
 import com.switchfully.eurder.exceptions.exceptions.ItemNotFoundException;
 import com.switchfully.eurder.service.dto.CreateOrderDTO;
+import com.switchfully.eurder.service.dto.ItemGroupOrderDTO;
 import com.switchfully.eurder.service.mappers.OrdersMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -116,5 +118,64 @@ class OrderServiceTest {
 
         // Then
         assertThat(result).isEqualTo(0.0);
+    }
+
+    @Test
+    void getOrderItems_whenOptionalIsNotEmpty() {
+        // Given
+        Optional<LocalDate> input = Optional.of(LocalDate.now().plusDays(1));
+        Customer customer = getDummyCustomer();
+        Order order = getDummyOrder();
+        Mockito.when(customersRepository.getById(order.getCustomerId())).thenReturn(Optional.of(customer));
+        Mockito.when(ordersRepository.getAllOrders()).thenReturn(List.of(order));
+        Mockito.when(ordersMapper.toItemGroupOrderDTO(order.getItems(), customer.getAddress())).thenReturn(List.of(getDummyItemGroupOrderDTO()));
+
+        // When
+        Collection<ItemGroupOrderDTO> result = ordersService.getOrderItems(input);
+
+        // Then
+        assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+    }
+
+    @Test
+    void getOrderItems_whenOptionalIsNotEmptyAndFilters() {
+        // Given
+        Optional<LocalDate> input = Optional.of(LocalDate.now());
+        Customer customer = getDummyCustomer();
+        Order order = getDummyOrder();
+        Mockito.when(customersRepository.getById(order.getCustomerId())).thenReturn(Optional.of(customer));
+        Mockito.when(ordersRepository.getAllOrders()).thenReturn(List.of(order));
+        Mockito.when(ordersMapper.toItemGroupOrderDTO(order.getItems(), customer.getAddress())).thenReturn(List.of(getDummyItemGroupOrderDTO()));
+
+        // When
+        Collection<ItemGroupOrderDTO> result = ordersService.getOrderItems(input);
+
+        // Then
+        assertThat(result)
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    void getOrderItems_whenOptionalIsEmpty() {
+        // Given
+        Optional<LocalDate> input = Optional.empty();
+        Customer customer = getDummyCustomer();
+        Order order = getDummyOrder();
+        Mockito.when(customersRepository.getById(order.getCustomerId())).thenReturn(Optional.of(customer));
+        Mockito.when(ordersRepository.getAllOrders()).thenReturn(List.of(order));
+        Mockito.when(ordersMapper.toItemGroupOrderDTO(order.getItems(), customer.getAddress())).thenReturn(List.of(getDummyItemGroupOrderDTO()));
+
+        // When
+        Collection<ItemGroupOrderDTO> result = ordersService.getOrderItems(input);
+
+        // Then
+        assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
     }
 }
