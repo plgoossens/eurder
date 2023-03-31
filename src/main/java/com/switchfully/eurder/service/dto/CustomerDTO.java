@@ -1,7 +1,5 @@
 package com.switchfully.eurder.service.dto;
 
-import java.util.UUID;
-
 public class CustomerDTO {
 
     private final String id;

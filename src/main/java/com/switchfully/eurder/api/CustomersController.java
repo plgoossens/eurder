@@ -1,6 +1,5 @@
 package com.switchfully.eurder.api;
 
-import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.domain.models.Feature;
 import com.switchfully.eurder.service.CredentialsService;
 import com.switchfully.eurder.service.CustomersService;
