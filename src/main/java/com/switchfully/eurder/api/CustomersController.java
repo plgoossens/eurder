@@ -17,7 +17,6 @@ import java.util.Collection;
 @RequestMapping("/customers")
 public class CustomersController {
     private final Logger logger = LoggerFactory.getLogger(CustomersController.class);
-
     private final CustomersService customersService;
     private final CredentialsService credentialsService;
 

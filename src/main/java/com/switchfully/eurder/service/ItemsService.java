@@ -1,6 +1,7 @@
 package com.switchfully.eurder.service;
 
 import com.switchfully.eurder.domain.models.Item;
+import com.switchfully.eurder.domain.models.Order;
 import com.switchfully.eurder.domain.models.UrgencyLevel;
 import com.switchfully.eurder.domain.repositories.ItemsRepository;
 import com.switchfully.eurder.service.dto.CreateItemDTO;
@@ -49,5 +50,12 @@ public class ItemsService {
                 .sorted(Comparator.comparing(ItemDTO::getUrgencyLevel))
                 .filter(itemDTO -> itemDTO.getUrgencyLevel().equals(urgencyLevel.orElse(itemDTO.getUrgencyLevel())))
                 .toList();
+    }
+
+    public void updateStockForOrder(Order order){
+        order.getItems().forEach(
+                itemGroup ->
+                        itemGroup.getItem().setAmount(
+                                itemGroup.getItem().getAmount()-itemGroup.getAmount()));
     }
 }

@@ -26,6 +26,7 @@ class OrderServiceTest {
     private OrdersRepository ordersRepository;
     private CustomersRepository customersRepository;
     private ItemsRepository itemsRepository;
+    private ItemsService itemsService;
     private OrdersService ordersService;
 
     @BeforeEach
@@ -34,7 +35,8 @@ class OrderServiceTest {
         ordersRepository = Mockito.mock(OrdersRepository.class);
         customersRepository = Mockito.mock(CustomersRepository.class);
         itemsRepository = Mockito.mock(ItemsRepository.class);
-        ordersService = new OrdersService(ordersMapper, ordersRepository, customersRepository, itemsRepository);
+        itemsService = Mockito.mock(ItemsService.class);
+        ordersService = new OrdersService(ordersMapper, ordersRepository, customersRepository, itemsRepository, itemsService);
     }
 
     @Test
@@ -52,7 +54,7 @@ class OrderServiceTest {
 
         // Then
         Mockito.verify(ordersRepository).add(order);
-        Mockito.verify(itemsRepository).updateStockForOrder(order);
+        Mockito.verify(itemsService).updateStockForOrder(order);
     }
 
     @Test
