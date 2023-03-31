@@ -4,6 +4,7 @@ import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.domain.repositories.CustomersRepository;
 import com.switchfully.eurder.exceptions.exceptions.CustomerNotFoundException;
 import com.switchfully.eurder.service.dto.CreateCustomerDTO;
+import com.switchfully.eurder.service.dto.CustomerDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
 import com.switchfully.eurder.service.mappers.CustomersMapper;
 import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
@@ -46,15 +47,16 @@ public class CustomersService {
         }
     }
 
-    public Collection<Customer> getCustomersList() {
-        return customersRepository.getCustomersList();
+    public Collection<CustomerDTO> getCustomersList() {
+        return customersMapper.toDTO(customersRepository.getCustomersList());
     }
 
-    public Customer getCustomerById(String id) {
+    public CustomerDTO getCustomerById(String id) {
         if(!isUUIDValid(id)){
             throw new CustomerNotFoundException("Customer with id " + id + " was not found.");
         }
-        return customersRepository.getById(UUID.fromString(id))
+        Customer customer = customersRepository.getById(UUID.fromString(id))
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " was not found."));
+        return customersMapper.toDTO(customer);
     }
 }

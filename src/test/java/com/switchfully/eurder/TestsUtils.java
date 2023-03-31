@@ -68,6 +68,10 @@ public class TestsUtils {
         return new Customer(CUSTOMER_FIRSTNAME, CUSTOMER_LASTNAME, CUSTOMER_EMAIL, CUSTOMER_ADDRESS, CUSTOMER_PHONENUMBER);
     }
 
+    public static CustomerDTO getDummyCustomerDTO(){
+        return new CustomerDTO(CUSTOMER_ID.toString(), CUSTOMER_FIRSTNAME, CUSTOMER_LASTNAME, CUSTOMER_EMAIL, CUSTOMER_ADDRESS, CUSTOMER_PHONENUMBER);
+    }
+
     public static CreateCustomerDTO getPartiallyNullDummyCreateCustomerDTO(){
         return new CreateCustomerDTO(CUSTOMER_FIRSTNAME, null, null, CUSTOMER_ADDRESS, CUSTOMER_PHONENUMBER);
     }

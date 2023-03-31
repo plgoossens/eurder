@@ -4,6 +4,7 @@ import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.domain.models.Feature;
 import com.switchfully.eurder.service.CredentialsService;
 import com.switchfully.eurder.service.CustomersService;
+import com.switchfully.eurder.service.dto.CustomerDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
 import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class CustomersController {
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Customer> getCustomersList(@RequestHeader String authorization){
+    public Collection<CustomerDTO> getCustomersList(@RequestHeader String authorization){
         logger.info("Getting the list of all customers");
         credentialsService.validateAuthorization(authorization, Feature.VIEW_ALL_CUSTOMERS);
         return customersService.getCustomersList();
@@ -44,7 +45,7 @@ public class CustomersController {
 
     @GetMapping(path="/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Customer getCustomerById(@PathVariable String id, @RequestHeader String authorization){
+    public CustomerDTO getCustomerById(@PathVariable String id, @RequestHeader String authorization){
         logger.info("Getting the customer with id " + id);
         credentialsService.validateAuthorization(authorization, Feature.VIEW_A_SINGLE_CUSTOMER);
         return customersService.getCustomerById(id);

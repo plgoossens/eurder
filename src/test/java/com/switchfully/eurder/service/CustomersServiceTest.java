@@ -4,6 +4,7 @@ import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.domain.repositories.CustomersRepository;
 import com.switchfully.eurder.exceptions.exceptions.CustomerNotFoundException;
 import com.switchfully.eurder.service.dto.CreateCustomerDTO;
+import com.switchfully.eurder.service.dto.CustomerDTO;
 import com.switchfully.eurder.service.mappers.CustomersMapper;
 import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,14 +57,18 @@ public class CustomersServiceTest {
     @Test
     void getCustomerByID_whenCustomerExists() {
         // Given
-        Customer expected = getDummyCustomer();
-        Mockito.when(customersRepository.getById(expected.getId())).thenReturn(Optional.of(expected));
+        Customer expectedCustomer = getDummyCustomer();
+        CustomerDTO expected = getDummyCustomerDTO();
+        Mockito.when(customersRepository.getById(expectedCustomer.getId())).thenReturn(Optional.of(expectedCustomer));
+        Mockito.when(customersMapper.toDTO(expectedCustomer)).thenReturn(expected);
 
         // When
-        Customer result = customersService.getCustomerById(expected.getId().toString());
+        CustomerDTO result = customersService.getCustomerById(expectedCustomer.getId().toString());
 
         // Then
-        assertThat(result).isEqualTo(expected);
+        assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
     }
 
     @Test

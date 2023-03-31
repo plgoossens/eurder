@@ -2,6 +2,7 @@ package com.switchfully.eurder.api;
 
 import com.switchfully.eurder.domain.models.Customer;
 import com.switchfully.eurder.service.dto.CreateCustomerDTO;
+import com.switchfully.eurder.service.dto.CustomerDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
 import com.switchfully.eurder.service.wrappers.CreateCustomerWrapper;
 import io.restassured.http.ContentType;
@@ -104,7 +105,7 @@ class CustomersControllerTest {
 
     @Test
     void getCustomersList_whenCustomersListIsEmpty() {
-        Customer[] result = RestAssured
+        CustomerDTO[] result = RestAssured
                 .given()
                 .accept(ContentType.JSON)
                 .baseUri("http://localhost")
@@ -116,7 +117,7 @@ class CustomersControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .extract()
-                .as(Customer[].class);
+                .as(CustomerDTO[].class);
 
         assertThat(result)
                 .isNotNull()
@@ -128,7 +129,7 @@ class CustomersControllerTest {
     void getCustomersList_whenCustomersListIsNotEmpty() {
         addCustomer();
 
-        Customer[] result = RestAssured
+        CustomerDTO[] result = RestAssured
                 .given()
                 .accept(ContentType.JSON)
                 .baseUri("http://localhost")
@@ -140,7 +141,7 @@ class CustomersControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .extract()
-                .as(Customer[].class);
+                .as(CustomerDTO[].class);
 
         assertThat(result)
                 .isNotNull()
@@ -154,7 +155,7 @@ class CustomersControllerTest {
         String id = addCustomer();
         Customer expected = getDummyCustomer();
 
-        Customer result = RestAssured
+        CustomerDTO result = RestAssured
                 .given()
                 .accept(ContentType.JSON)
                 .baseUri("http://localhost")
@@ -166,11 +167,11 @@ class CustomersControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .extract()
-                .as(Customer.class);
+                .as(CustomerDTO.class);
 
         assertThat(result)
                 .isNotNull()
-                .matches(customer -> customer.getId().toString().equals(id))
+                .matches(customer -> customer.getId().equals(id))
                 .matches(customer -> customer.getFirstName().equals(expected.getFirstName()))
                 .matches(customer -> customer.getLastName().equals(expected.getLastName()))
                 .matches(customer -> customer.getEmail().equals(expected.getEmail()))
