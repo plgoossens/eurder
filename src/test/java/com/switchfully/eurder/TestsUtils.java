@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class TestsUtils {
-    private static final UUID ITEM_ID = UUID.randomUUID();
+    public static final UUID ITEM_ID = UUID.randomUUID();
     private static final String ITEM_NAME = "Item";
     private static final String ITEM_DESCRIPTION = "Description";
     private static final Double ITEM_PRICE = 9.99;

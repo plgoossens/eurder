@@ -3,6 +3,7 @@ package com.switchfully.eurder.service;
 import com.switchfully.eurder.domain.models.Item;
 import com.switchfully.eurder.domain.models.UrgencyLevel;
 import com.switchfully.eurder.domain.repositories.ItemsRepository;
+import com.switchfully.eurder.exceptions.exceptions.ItemNotFoundException;
 import com.switchfully.eurder.service.dto.CreateItemDTO;
 import com.switchfully.eurder.service.dto.ItemDTO;
 import com.switchfully.eurder.service.mappers.ItemsMapper;
@@ -115,5 +116,27 @@ public class ItemsServiceTest {
 
         assertThat(result.stream().toList())
                 .matches(itemDTOS -> itemDTOS.get(0).getUrgencyLevel() == UrgencyLevel.STOCK_MEDIUM);
+    }
+
+    @Test
+    void updateItem() {
+        // Given
+        Item item = getDummyItem();
+        CreateItemDTO createItemDTO = new CreateItemDTO(null, null, 99.99, null);
+        Mockito.when(itemsRepository.getById(ITEM_ID.toString())).thenReturn(Optional.of(item));
+
+        // When
+        itemsService.updateItem(createItemDTO, ITEM_ID.toString());
+
+        // Then
+        Mockito.verify(itemsRepository).getById(ITEM_ID.toString());
+        Mockito.verify(itemsMapper).updateItemFromDTO(item, createItemDTO);
+    }
+
+    @Test
+    void updateItem_withInvalidUUID() {
+        assertThatThrownBy(() -> itemsService.updateItem(getDummyCreateItemDTO(), "invalidId"))
+                .isInstanceOf(ItemNotFoundException.class)
+                .hasMessage("Item with id invalidId was not found.");
     }
 }

@@ -45,4 +45,13 @@ public class ItemsController {
         logger.info("Item " + idDTO.getId() + " added");
         return idDTO;
     }
+
+    @PutMapping(path="/{id}", consumes = "application/json", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateAnItem(@RequestBody CreateItemDTO createItemDTO, @PathVariable String id, @RequestHeader String authorization){
+        logger.info("Updating item " + id);
+        credentialsService.validateAuthorization(authorization, Feature.UPDATE_AN_ITEM);
+        itemsService.updateItem(createItemDTO, id);
+        logger.info("Item " + id + " updated");
+    }
 }

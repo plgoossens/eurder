@@ -53,4 +53,19 @@ public class ItemsMapper {
     public ItemDTO toItemDTO(Item item){
         return new ItemDTO(item.getId().toString(), item.getName(), item.getDescription(), item.getPrice(), item.getAmount(), UrgencyLevel.getUrgencyLevelForStockAmount(item.getAmount()));
     }
+
+    public void updateItemFromDTO(Item item, CreateItemDTO createItemDTO){
+        if(createItemDTO.getName() != null){
+            item.setName(createItemDTO.getName());
+        }
+        if(createItemDTO.getDescription() != null){
+            item.setDescription(createItemDTO.getDescription());
+        }
+        if(createItemDTO.getPrice() != null){
+            item.setPrice(createItemDTO.getPrice());
+        }
+        if(createItemDTO.getAmount() != null){
+            item.setAmount(createItemDTO.getAmount());
+        }
+    }
 }

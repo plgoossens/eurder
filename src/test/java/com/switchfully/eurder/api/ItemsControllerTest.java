@@ -210,4 +210,114 @@ class ItemsControllerTest {
                 .hasSize(1)
                 .matches(itemDTOS -> itemDTOS[0].getAmount() == 2);
     }
+
+    @DirtiesContext
+    @Test
+    void updateItem() {
+        // Given
+        CreateItemDTO item = new CreateItemDTO("Item name", "description", 1.0, 2);
+        CreateItemDTO updateItem = new CreateItemDTO("Item name updated", "description updated", 10.0, 3);
+
+        IdDTO idDTO = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .auth().preemptive().basic("admin", "admin")
+                .body(item)
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .post("/items")
+                .then()
+                .extract()
+                .as(IdDTO.class);
+
+        // When
+
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .auth().preemptive().basic("admin", "admin")
+                .baseUri("http://localhost")
+                .body(updateItem)
+                .port(port)
+                .when()
+                .put("/items/" + idDTO.getId())
+                .then()
+        // Then
+                .assertThat()
+                .statusCode(HttpStatus.OK.value());
+
+        ItemDTO[] result = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .auth().preemptive().basic("admin", "admin")
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .get("/items")
+                .then()
+                .extract()
+                .as(ItemDTO[].class);
+
+        assertThat(result[0])
+                .matches(resultItem -> resultItem.getName().equals(updateItem.getName()))
+                .matches(resultItem -> resultItem.getDescription().equals(updateItem.getDescription()))
+                .matches(resultItem -> resultItem.getAmount() == updateItem.getAmount())
+                .matches(resultItem -> resultItem.getPrice() == updateItem.getPrice());
+    }
+
+    @DirtiesContext
+    @Test
+    void updateItem_withPartiallyNull() {
+        // Given
+        CreateItemDTO item = new CreateItemDTO("Item name", "description", 1.0, 2);
+        CreateItemDTO updateItem = new CreateItemDTO(null, "description updated", 10.0, null);
+
+        IdDTO idDTO = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .auth().preemptive().basic("admin", "admin")
+                .body(item)
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .post("/items")
+                .then()
+                .extract()
+                .as(IdDTO.class);
+
+        // When
+
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .auth().preemptive().basic("admin", "admin")
+                .baseUri("http://localhost")
+                .body(updateItem)
+                .port(port)
+                .when()
+                .put("/items/" + idDTO.getId())
+                .then()
+                // Then
+                .assertThat()
+                .statusCode(HttpStatus.OK.value());
+
+        ItemDTO[] result = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .auth().preemptive().basic("admin", "admin")
+                .baseUri("http://localhost")
+                .port(port)
+                .when()
+                .get("/items")
+                .then()
+                .extract()
+                .as(ItemDTO[].class);
+
+        assertThat(result[0])
+                .matches(resultItem -> resultItem.getName().equals(item.getName()))
+                .matches(resultItem -> resultItem.getDescription().equals(updateItem.getDescription()))
+                .matches(resultItem -> resultItem.getPrice() == updateItem.getPrice())
+                .matches(resultItem -> resultItem.getAmount() == item.getAmount());
+    }
 }

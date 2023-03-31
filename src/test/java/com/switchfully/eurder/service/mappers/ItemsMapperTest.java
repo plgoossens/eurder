@@ -113,4 +113,17 @@ class ItemsMapperTest {
                 .matches(itemGroupDTO -> itemGroupDTO.getUnitPrice() == expected.getUnitPrice())
                 .matches(itemGroupDTO -> itemGroupDTO.getOrderedAmount() == expected.getOrderedAmount());
     }
+
+    @Test
+    void updateItemFromDTO() {
+        // Given
+        Item item = getDummyItem();
+        CreateItemDTO createItemDTO = new CreateItemDTO(null, null, 99.99, null);
+
+        // When
+        itemsMapper.updateItemFromDTO(item, createItemDTO);
+
+        // Then
+        assertThat(item.getPrice()).isEqualTo(createItemDTO.getPrice());
+    }
 }

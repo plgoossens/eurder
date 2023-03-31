@@ -4,6 +4,7 @@ import com.switchfully.eurder.domain.models.Item;
 import com.switchfully.eurder.domain.models.Order;
 import com.switchfully.eurder.domain.models.UrgencyLevel;
 import com.switchfully.eurder.domain.repositories.ItemsRepository;
+import com.switchfully.eurder.exceptions.exceptions.ItemNotFoundException;
 import com.switchfully.eurder.service.dto.CreateItemDTO;
 import com.switchfully.eurder.service.dto.IdDTO;
 import com.switchfully.eurder.service.dto.ItemDTO;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
+
+import static com.switchfully.eurder.service.Utils.isUUIDValid;
 
 @Service
 public class ItemsService {
@@ -39,7 +42,11 @@ public class ItemsService {
             createItemDTO.getAmount() == null){
             throw new IllegalArgumentException("To add an item, these fields need to be completed : name, description, price and amount.");
         }
-        if(createItemDTO.getPrice() < 0.0 || createItemDTO.getAmount() < 0){
+        validateCreateItemDTOToUpdate(createItemDTO);
+    }
+
+    private void validateCreateItemDTOToUpdate(CreateItemDTO createItemDTO){
+        if((createItemDTO.getPrice() != null && createItemDTO.getPrice() < 0.0) || (createItemDTO.getAmount() != null && createItemDTO.getAmount() < 0)){
             throw new IllegalArgumentException("To add an item, the price and the amount must be positive.");
         }
     }
@@ -57,5 +64,15 @@ public class ItemsService {
                 itemGroup ->
                         itemGroup.getItem().setAmount(
                                 itemGroup.getItem().getAmount()-itemGroup.getAmount()));
+    }
+
+    public void updateItem(CreateItemDTO createItemDTO, String id) {
+        validateCreateItemDTOToUpdate(createItemDTO);
+        if(!isUUIDValid(id)){
+            throw new ItemNotFoundException("Item with id " + id + " was not found.");
+        }
+        Item itemToUpdate = itemsRepository.getById(id)
+                .orElseThrow(() -> new ItemNotFoundException("Item with id " + id + " was not found."));
+        itemsMapper.updateItemFromDTO(itemToUpdate, createItemDTO);
     }
 }
